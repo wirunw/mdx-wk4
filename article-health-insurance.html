@@ -139,7 +139,9 @@
             const [error, setError] = useState('');
             const speaker = {
                 name: 'คุณสาระ ล่ำซำ',
-                photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+                expertise: 'Insurance Tech Expert',
+                initials: 'สร',
+                gradient: 'from-purple-500 to-pink-500'
             };
 
             // Calculate reading progress
@@ -343,13 +345,8 @@ Adverse Selection คือสถานการณ์ที่อันตร�
                                 
                                 <div className="flex justify-center mb-8">
                                     <div className="relative">
-                                        <div className="w-32 h-32 rounded-full overflow-hidden shadow-xl ring-4 ring-white/40 bg-gradient-to-br from-purple-400 to-pink-500">
-                                            <img 
-                                                src={speaker.photo} 
-                                                alt={speaker.name} 
-                                                className="w-full h-full object-cover"
-                                                loading="lazy"
-                                            />
+                                        <div className={`w-32 h-32 rounded-full shadow-xl ring-4 ring-white/40 bg-gradient-to-br ${speaker.gradient} flex items-center justify-center text-white text-4xl font-bold`}>
+                                            {speaker.initials}
                                         </div>
                                         <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
                                             <Award className="text-purple-600" size={20} />

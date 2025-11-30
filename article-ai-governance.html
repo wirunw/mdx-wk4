@@ -139,7 +139,9 @@
             const [error, setError] = useState('');
             const speaker = {
                 name: 'ดร.ศักดิ์ เสกขุนทด',
-                photo: 'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?auto=format&fit=crop&w=400&q=80'
+                expertise: 'AI Governance Expert',
+                initials: 'ศก',
+                gradient: 'from-indigo-500 to-purple-500'
             };
 
             // Calculate reading progress
@@ -419,13 +421,8 @@ Generative AI อาจสร้างผลลัพธ์ที่มีอค
                                 
                                 <div className="flex justify-center mb-8">
                                     <div className="relative">
-                                        <div className="w-32 h-32 rounded-full overflow-hidden shadow-xl ring-4 ring-white/40 bg-gradient-to-br from-indigo-400 to-purple-500">
-                                            <img 
-                                                src={speaker.photo} 
-                                                alt={speaker.name} 
-                                                className="w-full h-full object-cover"
-                                                loading="lazy"
-                                            />
+                                        <div className={`w-32 h-32 rounded-full shadow-xl ring-4 ring-white/40 bg-gradient-to-br ${speaker.gradient} flex items-center justify-center text-white text-4xl font-bold`}>
+                                            {speaker.initials}
                                         </div>
                                         <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
                                             <Award className="text-indigo-600" size={20} />
