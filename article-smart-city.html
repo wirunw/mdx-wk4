@@ -160,19 +160,24 @@
             }, []);
 
             useEffect(() => {
-                const mdPath = encodeURI('smart city.md');
-                fetch(mdPath)
-                    .then((res) => {
-                        if (!res.ok) throw new Error('failed to load');
-                        return res.text();
-                    })
-                    .then((text) => {
-                        setArticleContent(text.trim());
-                        const words = text.split(/\s+/).filter(Boolean).length;
-                        setReadingTime(Math.max(3, Math.ceil(words / 200)));
-                    })
-                    .catch(() => setError('ไม่สามารถโหลดบทความได้ กรุณาลองใหม่'))
-                    .finally(() => setLoading(false));
+                const tryLoad = async () => {
+                    const candidates = ['smart city.md', 'smart_city.md'];
+                    for (const candidate of candidates) {
+                        try {
+                            const res = await fetch(encodeURI(candidate));
+                            if (!res.ok) throw new Error('failed');
+                            const text = await res.text();
+                            setArticleContent(text.trim());
+                            const words = text.split(/\s+/).filter(Boolean).length;
+                            setReadingTime(Math.max(3, Math.ceil(words / 200)));
+                            return;
+                        } catch (err) {
+                            continue;
+                        }
+                    }
+                    setError('ไม่สามารถโหลดบทความได้ กรุณาลองใหม่');
+                };
+                tryLoad().finally(() => setLoading(false));
             }, []);
 
             const goBack = () => {
