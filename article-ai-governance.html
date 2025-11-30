@@ -141,7 +141,8 @@
                 name: 'ดร.ศักดิ์ เสกขุนทด',
                 expertise: 'AI Governance Expert',
                 initials: 'ศก',
-                gradient: 'from-indigo-500 to-purple-500'
+                gradient: 'from-indigo-500 to-purple-500',
+                photo: 'https://i.postimg.cc/j2ZcHtSj/Gemini-Generated-Image-s1w0cms1w0cms1w0.png'
             };
 
             // Calculate reading progress
@@ -421,9 +422,20 @@ Generative AI อาจสร้างผลลัพธ์ที่มีอค
                                 
                                 <div className="flex justify-center mb-8">
                                     <div className="relative">
-                                        <div className={`w-32 h-32 rounded-full shadow-xl ring-4 ring-white/40 bg-gradient-to-br ${speaker.gradient} flex items-center justify-center text-white text-4xl font-bold`}>
-                                            {speaker.initials}
-                                        </div>
+                                        {speaker.photo ? (
+                                            <div className="w-32 h-32 rounded-full overflow-hidden shadow-xl ring-4 ring-white/40 bg-white">
+                                                <img
+                                                    src={speaker.photo}
+                                                    alt={speaker.name}
+                                                    className="w-full h-full object-cover"
+                                                    loading="lazy"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className={`w-32 h-32 rounded-full shadow-xl ring-4 ring-white/40 bg-gradient-to-br ${speaker.gradient} flex items-center justify-center text-white text-4xl font-bold`}>
+                                                {speaker.initials}
+                                            </div>
+                                        )}
                                         <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
                                             <Award className="text-indigo-600" size={20} />
                                         </div>
@@ -451,24 +463,29 @@ Generative AI อาจสร้างผลลัพธ์ที่มีอค
                                         let inList = false;
                                         let listItems = [];
 
-                                        const parseBoldText = (text, keyPrefix) => {
+                                        const parseInline = (text, keyPrefix) => {
                                             const parts = [];
                                             let lastIndex = 0;
-                                            const regex = /\*\*(.*?)\*\*/g;
+                                            const regex = /(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/g;
                                             let match;
-                                            
+
                                             while ((match = regex.exec(text)) !== null) {
                                                 if (match.index > lastIndex) {
                                                     parts.push(text.substring(lastIndex, match.index));
                                                 }
-                                                parts.push(<strong key={`${keyPrefix}-${match.index}`}>{match[1]}</strong>);
+                                                const token = match[0];
+                                                if (token.startsWith('**')) {
+                                                    parts.push(<strong key={`${keyPrefix}-b-${match.index}`}>{token.slice(2, -2)}</strong>);
+                                                } else {
+                                                    parts.push(<em key={`${keyPrefix}-i-${match.index}`}>{token.slice(1, -1)}</em>);
+                                                }
                                                 lastIndex = regex.lastIndex;
                                             }
-                                            
+
                                             if (lastIndex < text.length) {
                                                 parts.push(text.substring(lastIndex));
                                             }
-                                            
+
                                             return parts.length > 0 ? parts : text;
                                         };
 
