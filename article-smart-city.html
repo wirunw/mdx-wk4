@@ -515,21 +515,21 @@ Smart Hospital คือโรงพยาบาลที่ใช้เทค�
                                                     listItems = [];
                                                     inList = false;
                                                 }
-                                                elements.push(<h1 key={i}>{parseBoldText(line.replace('# ', ''), `h1-${i}`)}</h1>);
+                                                elements.push(<h1 key={i}>{parseInline(line.replace('# ', ''), `h1-${i}`)}</h1>);
                                             } else if (line.startsWith('## ')) {
                                                 if (inList) {
                                                     elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
                                                     listItems = [];
                                                     inList = false;
                                                 }
-                                                elements.push(<h2 key={i}>{parseBoldText(line.replace('## ', ''), `h2-${i}`)}</h2>);
+                                                elements.push(<h2 key={i}>{parseInline(line.replace('## ', ''), `h2-${i}`)}</h2>);
                                             } else if (line.startsWith('### ')) {
                                                 if (inList) {
                                                     elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
                                                     listItems = [];
                                                     inList = false;
                                                 }
-                                                elements.push(<h3 key={i}>{parseBoldText(line.replace('### ', ''), `h3-${i}`)}</h3>);
+                                                elements.push(<h3 key={i}>{parseInline(line.replace('### ', ''), `h3-${i}`)}</h3>);
                                             } else if (line.startsWith('![')) {
                                                 if (inList) {
                                                     elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
@@ -551,7 +551,7 @@ Smart Hospital คือโรงพยาบาลที่ใช้เทค�
                                             } else if (line.startsWith('* ')) {
                                                 inList = true;
                                                 const text = line.replace('* ', '');
-                                                listItems.push(<li key={i}>{parseBoldText(text, `li-${i}`)}</li>);
+                                                listItems.push(<li key={i}>{parseInline(text, `li-${i}`)}</li>);
                                             } else if (line.match(/^\d+\. /)) {
                                                 if (inList) {
                                                     elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
@@ -562,7 +562,7 @@ Smart Hospital คือโรงพยาบาลที่ใช้เทค�
                                                 if (match) {
                                                     const number = match[1];
                                                     const text = match[2];
-                                                    elements.push(<p key={i} className="ml-6 mb-2 font-semibold text-slate-800">{number}. {parseBoldText(text, `p-${i}`)}</p>);
+                                                elements.push(<p key={i} className="ml-6 mb-2 font-semibold text-slate-800">{number}. {parseInline(text, `p-${i}`)}</p>);
                                                 }
                                             } else if (line.startsWith('> ')) {
                                                 if (inList) {
@@ -571,7 +571,7 @@ Smart Hospital คือโรงพยาบาลที่ใช้เทค�
                                                     inList = false;
                                                 }
                                                 const text = line.replace('> ', '');
-                                                elements.push(<blockquote key={i}>{parseBoldText(text, `blockquote-${i}`)}</blockquote>);
+                                                elements.push(<blockquote key={i}>{parseInline(text, `blockquote-${i}`)}</blockquote>);
                                             } else if (line.startsWith('---')) {
                                                 if (inList) {
                                                     elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
@@ -592,7 +592,7 @@ Smart Hospital คือโรงพยาบาลที่ใช้เทค�
                                                     listItems = [];
                                                     inList = false;
                                                 }
-                                                elements.push(<p key={i}>{parseBoldText(line, `p-${i}`)}</p>);
+                                                elements.push(<p key={i}>{parseInline(line, `p-${i}`)}</p>);
                                             }
                                         }
 
