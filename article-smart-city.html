@@ -137,6 +137,10 @@
             const [articleContent, setArticleContent] = useState('');
             const [loading, setLoading] = useState(true);
             const [error, setError] = useState('');
+            const speaker = {
+                name: 'ดร.ชวพล จริยาวิโรจน์',
+                photo: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=400&q=80'
+            };
 
             // Calculate reading progress
             useEffect(() => {
@@ -432,8 +436,13 @@ Smart Hospital คือโรงพยาบาลที่ใช้เทค�
                                 
                                 <div className="flex justify-center mb-8">
                                     <div className="relative">
-                                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white text-4xl font-bold shadow-xl">
-                                            ภพ
+                                        <div className="w-32 h-32 rounded-full overflow-hidden shadow-xl ring-4 ring-white/40 bg-gradient-to-br from-green-400 to-emerald-500">
+                                            <img 
+                                                src={speaker.photo} 
+                                                alt={speaker.name} 
+                                                className="w-full h-full object-cover"
+                                                loading="lazy"
+                                            />
                                         </div>
                                         <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
                                             <Award className="text-green-600" size={20} />
