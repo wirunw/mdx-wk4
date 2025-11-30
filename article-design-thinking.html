@@ -134,6 +134,9 @@
         const ArticlePage = () => {
             const [readingProgress, setReadingProgress] = useState(0);
             const [readingTime, setReadingTime] = useState(12);
+            const [articleContent, setArticleContent] = useState('');
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState('');
 
             // Calculate reading progress
             useEffect(() => {
@@ -149,11 +152,27 @@
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
 
+            useEffect(() => {
+                const mdPath = encodeURI('design thinking.md');
+                fetch(mdPath)
+                    .then((res) => {
+                        if (!res.ok) throw new Error('failed to load');
+                        return res.text();
+                    })
+                    .then((text) => {
+                        setArticleContent(text.trim());
+                        const words = text.split(/\s+/).filter(Boolean).length;
+                        setReadingTime(Math.max(3, Math.ceil(words / 200)));
+                    })
+                    .catch(() => setError('ไม่สามารถโหลดบทความได้ กรุณาลองใหม่'))
+                    .finally(() => setLoading(false));
+            }, []);
+
             const goBack = () => {
                 window.location.href = 'index.html#articles';
             };
 
-            const articleContent = `
+            const legacyContent = `
 # ถอดรหัส Design Thinking: กระบวนการคิดเชิงออกแบบที่เปลี่ยน 'ปัญหา' ให้เป็น 'นวัตกรรม' ที่คนรัก
 
 ![Design Thinking Process](https://i.postimg.cc/3J3J3J3J/design-thinking.png)
@@ -357,8 +376,15 @@ Design Thinking ไม่ใช่ศาสตร์ลึกลับที่�
                         <div className="container mx-auto px-6">
                             <div className="max-w-4xl mx-auto">
                                 <article className="article-content bg-white rounded-2xl shadow-lg p-8 md:p-12">
-                                    {(() => {
-                                        const lines = articleContent.split('\n');
+                                    {loading && (
+                                        <p className="text-slate-500">กำลังโหลดเนื้อหา...</p>
+                                    )}
+                                    {error && !loading && (
+                                        <p className="text-red-600">{error}</p>
+                                    )}
+                                    {!loading && !error && (() => {
+                                        const content = articleContent || legacyContent;
+                                        const lines = content.split('\n');
                                         const elements = [];
                                         let inList = false;
                                         let listItems = [];
