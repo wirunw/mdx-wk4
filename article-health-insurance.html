@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เจาะลึกระบบประกันสุขภาพไทย - MDX Class 1</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for article reading */
+        .article-content {
+            line-height: 1.8;
+            font-size: 18px;
+        }
+        
+        .article-content h1 {
+            @apply text-3xl font-bold text-slate-900 mb-6 mt-8 pb-4 border-b-2 border-slate-200;
+        }
+        
+        .article-content h2 {
+            @apply text-2xl font-bold text-slate-800 mb-4 mt-6 pb-2 border-b border-slate-100;
+        }
+        
+        .article-content h3 {
+            @apply text-xl font-semibold text-slate-700 mb-3 mt-5;
+        }
+        
+        .article-content p {
+            @apply mb-4 text-slate-700 leading-relaxed;
+        }
+        
+        .article-content ul {
+            @apply mb-4 ml-6 list-disc list-outside;
+        }
+        
+        .article-content li {
+            @apply mb-2 text-slate-700;
+        }
+        
+        .article-content strong {
+            @apply font-semibold text-slate-900;
+        }
+        
+        .article-content blockquote {
+            @apply border-l-4 border-purple-500 pl-6 py-2 my-6 bg-purple-50 rounded-r-lg;
+        }
+        
+        .article-content hr {
+            @apply my-8 border-t-2 border-slate-200;
+        }
+        
+        /* Reading progress bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #a855f7, #ec4899);
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const IconBase = ({ size = 24, strokeWidth = 2, color = 'currentColor', className = '', children, ...props }) => (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={size}
+                height={size}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={color}
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={className}
+                {...props}
+            >
+                {children}
+            </svg>
+        );
+
+        const ArrowLeft = (props) => (
+            <IconBase {...props}>
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+            </IconBase>
+        );
+
+        const Clock = (props) => (
+            <IconBase {...props}>
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </IconBase>
+        );
+
+        const Users = (props) => (
+            <IconBase {...props}>
+                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </IconBase>
+        );
+
+        const Calendar = (props) => (
+            <IconBase {...props}>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+            </IconBase>
+        );
+
+        const Award = (props) => (
+            <IconBase {...props}>
+                <circle cx="12" cy="8" r="5" />
+                <path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.11" />
+            </IconBase>
+        );
+
+        const ArticlePage = () => {
+            const [readingProgress, setReadingProgress] = useState(0);
+            const [readingTime, setReadingTime] = useState(18);
+
+            // Calculate reading progress
+            useEffect(() => {
+                const handleScroll = () => {
+                    const windowHeight = window.innerHeight;
+                    const documentHeight = document.documentElement.scrollHeight - windowHeight;
+                    const scrolled = window.scrollY;
+                    const progress = (scrolled / documentHeight) * 100;
+                    setReadingProgress(Math.min(progress, 100));
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const goBack = () => {
+                window.location.href = 'index.html#articles';
+            };
+
+            const articleContent = `
+# เจาะลึกระบบประกันสุขภาพไทย: ทำไมเบี้ยประกันแพงขึ้น และ AI จะเข้ามาแก้เกมได้อย่างไร?
+
+![Health Insurance Concept](https://i.postimg.cc/63NLvytQ/health_insurance.png)
+
+## 1. บทนำ: เมื่อระบบสุขภาพกำลังส่งสัญญาณวิกฤต
+
+ปฏิเสธไม่ได้ว่าหนึ่งในความกังวลใจอันดับต้นๆ ของคนวัยทำงานในปจจุบัน คือภาระค่าใช้จ่ายด้านสุขภาพที่ทะยานสูงขึ้นอย่างต่อเนื่องสวนทางกับรายได้ในกระเป๋า ภาพของค่ารักษาพยาบาลที่เพิ่มขึ้นทุกปี และใบแจ้งชำระเบี้ยประกันสุขภาพที่ปรับตัวสูงขึ้นจนน่าตกใจ กลายเป็นความจริงที่ทุกคนต้องเผชิญ
+
+ปรากการณ์นี้ไม่ใช่เรื่องบังเอิญหรือความผิดปกติชั่วคราว แต่คืออาการของ **"ระบบที่กำลังอยู่ภายใต้ความกดดันมหาศาล"** (system under stress) ซึ่งสะทอนการเปลี่ยนแปลงเชิงโครงสร้างครั้งใหญ่ในระบบนิเวศสุขภาพของประเทศไทย
+
+> "การเพิ่มขึ้นของเบี้ยประกันสุขภาพไม่ใช่แค่ตัวเลข แต่เป็นสัญญาณเตือนว่าระบบสุขภาพกำลังเผชิญกับความท้าทายโครงสร้าง"
+
+ในฐานะผู้เชี่ยวชาญ บทความนี้จะทำการวินิจฉัยเชิงลึกถึงเบื้องหลังของความท้าทายที่ซับซ้อนเหล่านี้ ตั้งแต่แก่นแท้ของปรัชญา **"ประกัน"** ไปจนถึงปัจจัยมหาศาลที่กำลังผลักดันให้ต้นทุนค่ารักษาพยาบาลและเบี้ยประกันพุ่งสูงขึ้นอย่างที่ไม่เคยเป็นมาก่อน
+
+## 2. แก่นแท้ของประกันสุขภาพ: ไม่ใช่แค่การซื้อขาย แต่คือการ "เฉลี่ยทุกข์ เฉลี่ยสุข"
+
+การทำความเข้าใจปรัชญาพื้อฐานของระบบประกันมีความสำคัญอย่างยิ่งในเชิงกลยุทธ์ เพราะความเข้าใจที่คลาดเคลื่อเกี่ยวกับหลักการนี้ คือต้นตอของความรู้สึกยอดนิยมที่ว่า "จ่ายเบี้ยทิ้ง" หรือ "บริษัทประกันเอาเปรียบ"
+
+หัวใจของระบบประกันสุขภาพไม่ได้อยู่ที่การซื้อขายความคุ้มครอง แต่ตั้งอยู่บนหลักการที่เรียกว่า "การรวมความเสี่ยง" (Risk Pooling) หรือหากจะใช้คำเปรียบเปรยที่ทรงพลังและเข้าใจง่ายที่สุด ก็คือหลักการ "เฉลี่ยทุกข์ เฉลี่ยสุข"
+
+ระบบประกันสามารถดำรงอยู่ได้ก็เพราะมีคนจำนวนมากที่มีสุขภาพดี ยอมจ่ายเบี้ยประกันของตนเข้าสู่ "กองกลาง" เพื่อสร้างหลักประกันและให้ความช่วยเหลือคนส่วนน้อยที่โชคร้ายต้องเจ็บป่วยและเผชิญกับค่ารักษาพยาบาลที่สูงเกินกว่าจะรับภาระได้เพียงลำพัง
+
+เงินจากคนที่ไม่เคลม ได้ถูกนำไปช่วยเหลือคนที่จำเป็นต้องเคลม นี่คือกลไกพื้อฐานที่ทำให้ระบบสามารถรองรับความเสี่ยงทางการเงินมหาศาลและมอบความคุ้มครองให้กับสมาชิกทุกคนใน Pool ได้อย่างยั่งยืน
+
+## 3. พายุที่สมบูรณ์แบบ (The Perfect Storm): 3 ปัจจัยหลักที่ขับเคลื่อนค่าเบี้ยประกันสุขภาพไทย
+
+การเพิ่มขึ้นอย่างก้าวกระโดดของเบี้ยประกันสุขภาพไม่ได้มาจากปัจจัยเดียว แต่เป็นผลลัพธ์จาก "พายุที่สมบูรณ์แบบ" (The Perfect Storm) ของความท้าทาย 3 ด้านที่เกิดขึ้นพร้อมกัน
+
+### ปัจจัยที่ 1: "เงินเฟ้อทางการแพทย์ (Medical Inflation)" ตัวขับเคลื่อนที่มองไม่เห็น
+
+นี่คือปัจจัยที่ทรงพลังที่สุดแต่กลับถูกพูดถึงน้อยที่สุด อ้างอิงจากข้อมูลคาดการณ์ปี 2024-2025E ของ Willis Towers Watson ประเทศไทยมีอัตราเงินเฟ้อทางการแพทย์สูงถึง 14.2% ซึ่งสูงเป็นอันดับต้นๆ ในภูมิภาค และสูงกว่าอัตราเงินเฟ้อทั่วไปหลายเท่าตัว
+
+สาเหตุหลักที่ทำให้ค่ารักษาพยาบาลแพงขึ้นอย่างรวดเร็ว มาจาก 3 องค์ประกอบหลัก:
+
+* **เทคโนโลยีทางการแพทย์ใหม่ๆ**: นวัตกรรมอย่างหุ่นยนต์ช่วยผ่าตัด (Robotic Surgery) หรือเครื่องมือวินิจฉัยที่ใช้ AI
+* **การใช้บริการที่มากขึ้น (Increased Utilization)**: เมื่อมีเทคโนโลยีที่ดีและเข้าถึงง่ายขึ้น
+* **ปัญหา FWA (Fraud, Waste, Abuse)**: นี่คือ "ภาษีแฝดที่ผู้ถือกรมธรรม์ทุกคนต้องร่วมจ่าย"
+
+### ปัจจัยที่ 2: สังคมสูงวัยขั้นสุดยอด (Super-aged Society) และโครงสร้างประชากรที่เปลี่ยนไป
+
+ข้อมูลเชิงประชากรศาสตร์ชี้ชัดว่า ประเทศไทยจะก้าวเข้าสู่ "สังคมสูงวัยระดับสุดยอด" (Super-aged Society) ในปี 2029 ซึ่งหมายถึงการมีประชากรอายุ 65 ปีขึ้นไปในสัดส่วนที่สูงกว่า 20% ของประชากรทั้งหมด
+
+ผลกระทบที่ตามมาคือความไม่สมดุลันอย่างรุนแรงใน Risk Pool คนวัยทำงาน (ผู้จ่ายเบี้ยประกัน) ลดลง ในขณะที่จำนวนผู้สูงอายุ (ผู้ใช้บริการสุขภาพบ่อยครั้ง) เพิ่มขึ้นอย่างมาก
+
+### ปัจจัยที่ 3: "Adverse Selection" และความเสี่ยงที่ระบบจะล่มสลาย
+
+Adverse Selection คือสถานการณ์ที่อันตรายที่สุดสำหรับระบบประกัน ซึ่งในวงการเรียกว่า "วงจรมรณะแห่งการประกันภัย" (Death Spiral of Insurance)
+
+มันคือจุดที่คนสุขภาพดีเริ่มรู้สึกว่าเบี้ยประกัน "แพงเกินไป" และไม่คุ้มค่า จึงตัดสินใจทยอออกจากระบบประกัน ผลลัพธ์คือ ใน "Risk Pool" หรือกองกลาง จะเหลือแต่กลุ่มคนที่มีความเสี่ยงสูงและมีอัตราการเคลมบ่อยครั้ง
+
+## 4. กลไกสร้างสมดุลน: ทำความเข้าใจกฎเกณฑ์ใหม่ของประกันสุขภาพ
+
+ท่ามกลางแรงกดดันจากทุกทิศทาง อุตสาหกรรมจึงถูกบีบให้ต้องนำกลไกควบคุมความเสี่ยงใหม่ๆ เข้ามาปรับใช้ สิ่งสำคัญคือต้องเข้าใจว่ามาตรการเหล่านี้ไม่ได้มีขึ้นเพื่อเอาเปรียบผู้บริโภค แต่เป็นเครื่องมือที่จำเป็นอย่างยิ่งเพื่อให้ระบบประกันสุขภาพโดยรวม "อยู่รอด" และสามารถให้ความคุ้มครองแก่ทุกคนได้อย่างยั่งยืนในระยะยาว
+
+### การร่วมจ่าย (Copayment) และการร่วมจ่ายเมื่อต่ออายุ (Renewal Copay)
+
+* **Copayment (การร่วมจ่าย)**: เป็นกลไกพื้อฐานที่ให้ผู้เอาประกันมีส่วนร่วมรับผิดชอบค่าใช้จ่ายบางส่วน
+* **Renewal Copay (การร่วมจ่ายเมื่อต่ออายุ)**: นี่คือ "มาตรการใหม่" ที่ถูกออกแบบมาเพื่อจัดการกับพฤติกรรมการเคลมที่ผิดปกติโดยเฉพาะ
+
+### เกณฑ์การใช้ Renewal Copay ที่เป็นรูปธรรม
+
+สมาคมประกันชีวิตไทยได้วางเกณฑ์ที่ชัดเจนสำหรับ Renewal Copay โดยสรุปเงื่อนไขได้ดังนี้:
+
+* **กรณีที่ 1 (โรคไม่รุนแรง - Simple Diseases)**: หากผู้เอาประกันเคลมค่ารักษาโรคเล็กน้อยบ่อยครั้งกว่า 3 ครั้งต่อปี
+* **กรณีที่ 2 (โรคทั่วไป)**: หากมีการเคลมค่ารักษาโรคทั่วไป (ที่ไม่ใช่โรคร้ายแรงหรือการผ่าตัดใหญ่) บ่อยครั้งกว่า 3 ครั้งต่อปี
+
+## 5. ปฏิวัติด้วยข้อมูลและ AI: อนาคตของประกันสุขภาพที่ชาญฉลาดและเป็นธรรมกว่าเดิม
+
+การปฏิรูปด้วยเทคโนโลยีไม่ได้เป็นเพียงแค่การนำเครื่องมือใหม่ๆ เข้ามาเพื่อลดต้นทุน แต่ปัญญาประดิษฐ์ (AI) และข้อมูล (Data) คือหัวใจสำคัญในการสร้างระบบประกันสุขภาพที่ "เร็วขึ้น ถูกลง และแม่นขึ้น"
+
+### บทบาทของ AI ในการต่อสู้ FWA (Fraud, Waste, Abuse)
+
+หนึ่งในตัวอย่างที่ทรงพลังที่สุดคือการนำ AI เข้ามา "Normalize" หรือจัดระเบียบข้อมูลยาให้เป็นมาตรฐานเดียวกัน
+
+ลองพิจารณายาพื้อฐานอย่างพาราเซตามอล ในโลกความเป็นจริง ข้อมูลจากโรงพยาบาลกว่า 200 แห่ง สามารถสร้างรูปแบบการเขียนชื่อยาตัวนี้ที่แตกต่างกันได้มากกว่า 5,000 รูปแบบ ซึ่งมนุษย์ไม่สามารถตรวจสอบความผิดปกติได้ทั้งหมด แต่ AI สามารถ "แปล" และจัดระเบียบข้อมูลทั้ง 5,000 รูปแบบให้กลายเป็นจุดข้อมูลมาตรฐานเพียงจุดเดียวได้ในทันที
+
+### แนวโน้มสู่การประกันภัยส่วนบุคคล (Personalized Insurance)
+
+เทคโนโลยีได้เปิดประตูไปสู่การคำนวณเบี้ยประกันที่เป็นธรรมและสะทอนความเสี่ยงของแต่ละบุคคลได้อย่างแท้จริง
+
+* **โปรแกรมสร้างแรงจูงใจ**: ตัวอย่างเช่น โปรแกรม MTL FIT ที่ใช้ข้อมูลพฤติกรรมสุขภาพจากอุปกรณ์สวมใส
+* **อายุชีวภาพ (Biological Age)**: นี่คือแนวคิดแห่งอนาคต การใช้อายุตามปีเกิดเป็น "เครื่องมือหยาบแห่งศตวรรษที่ 20"
+
+## 6. สรุปและแบบฝึกหัดชวนคิด: คุณคือส่วนหนึ่งของระบบนิเวศสุขภาพ
+
+ระบบประกันสุขภาพคือ "ความรับผิดชอบร่วมกัน" ของทุกภาคส่วนในสังคม การจะสร้างระบบที่ยั่งยืนและเป็นธรรมได้นั้นต้องอาศัยความเข้าใจและความร่วมมือจากทุกภาคส่วน
+
+เพื่อกระตุ้นให้เกิดการคิดต่อยอดและนำความเข้าใจนี้ไปปรับใช้ในชีวิตจริง ลองใช้เวลาทบทวนกับ "การดูแลสุขภาพเชิงกลยุทธ์: 3 แนวปฏิบัติสำหรับมืออาชีพยุคใหม่"
+
+1. **ตรวจสอบกรมธรรม์ (Conduct a Policy Audit)**: คุณเข้าใจความคุ้มครองและเงื่อนไขสำคัญของกรมธรรม์ของคุณดีพอแล้วหรือยัง?
+2. **ประเมินโปรไฟล์การใช้บริการ (Evaluate Your Utilization Profile)**: การใช้บริการอย่างสมเหตุสมผลคือการช่วยรักษากองกลางของทุกคน
+3. **ลงทุนในสินทรัพย์ชีวภาพ (Invest in Your Biological Equity)**: การลงทุนกับสุขภาพของตัวเองในวันนี้ คือการลดภาระค่าใช้จ่ายด้านสุขภาพในอนาคตที่ดีและยั่งยืนที่สุด
+
+---
+
+*บทความนี้เป็นส่วนหนึ่งของหลักสูตรผู้บริหารดิจิทัลทางการแพทย์ รุ่นที่ 1 โดย คุณสาระ ล่ำซำ และคณะ*
+            `;
+
+            return (
+                <div className="min-h-screen bg-slate-50">
+                    {/* Reading Progress Bar */}
+                    <div 
+                        className="reading-progress"
+                        style={{ width: `${readingProgress}%` }}
+                    ></div>
+
+                    {/* Navigation */}
+                    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-slate-200">
+                        <div className="container mx-auto px-6 py-4">
+                            <div className="flex items-center justify-between">
+                                <button 
+                                    onClick={goBack}
+                                    className="flex items-center gap-2 text-slate-600 hover:text-purple-600 transition-colors"
+                                >
+                                    <ArrowLeft size={20} />
+                                    <span className="font-medium">กลับไปหน้าบทความ</span>
+                                </button>
+                                
+                                <div className="flex items-center gap-6 text-sm text-slate-500">
+                                    <div className="flex items-center gap-2">
+                                        <Clock size={16} />
+                                        <span>อ่าน {readingTime} นาที</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Users size={16} />
+                                        <span>คุณสาระ ล่ำซำ</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Calendar size={16} />
+                                        <span>29 พฤศจิกายน 2568</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Article Header */}
+                    <header className="bg-gradient-to-br from-purple-600 to-pink-700 text-white py-16">
+                        <div className="container mx-auto px-6">
+                            <div className="max-w-4xl mx-auto text-center">
+                                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+                                    <Award className="text-yellow-300" size={20} />
+                                    <span className="text-sm font-semibold">Health Insurance</span>
+                                </div>
+                                
+                                <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                                    เจาะลึกระบบประกันสุขภาพไทย
+                                </h1>
+                                
+                                <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                                    ทำไมเบี้ยประกันแพงขึ้น และ AI จะเข้ามาแก้เกมได้อย่างไร?
+                                </p>
+                                
+                                <div className="flex items-center justify-center gap-8 text-white/80 mb-8">
+                                    <div className="flex items-center gap-2">
+                                        <Users size={18} />
+                                        <span>คุณสาระ ล่ำซำ</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Clock size={18} />
+                                        <span>{readingTime} นาที</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex justify-center mb-8">
+                                    <div className="relative">
+                                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white text-4xl font-bold shadow-xl">
+                                            สร
+                                        </div>
+                                        <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
+                                            <Award className="text-purple-600" size={20} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Article Content */}
+                    <main className="py-12">
+                        <div className="container mx-auto px-6">
+                            <div className="max-w-4xl mx-auto">
+                                <article className="article-content bg-white rounded-2xl shadow-lg p-8 md:p-12">
+                                    {(() => {
+                                        const lines = articleContent.split('\n');
+                                        const elements = [];
+                                        let inList = false;
+                                        let listItems = [];
+
+                                        const parseBoldText = (text, keyPrefix) => {
+                                            const parts = [];
+                                            let lastIndex = 0;
+                                            const regex = /\*\*(.*?)\*\*/g;
+                                            let match;
+                                            
+                                            while ((match = regex.exec(text)) !== null) {
+                                                if (match.index > lastIndex) {
+                                                    parts.push(text.substring(lastIndex, match.index));
+                                                }
+                                                parts.push(<strong key={`${keyPrefix}-${match.index}`}>{match[1]}</strong>);
+                                                lastIndex = regex.lastIndex;
+                                            }
+                                            
+                                            if (lastIndex < text.length) {
+                                                parts.push(text.substring(lastIndex));
+                                            }
+                                            
+                                            return parts.length > 0 ? parts : text;
+                                        };
+
+                                        for (let i = 0; i < lines.length; i++) {
+                                            const line = lines[i];
+                                            
+                                            if (line.startsWith('# ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h1 key={i}>{parseBoldText(line.replace('# ', ''), `h1-${i}`)}</h1>);
+                                            } else if (line.startsWith('## ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h2 key={i}>{parseBoldText(line.replace('## ', ''), `h2-${i}`)}</h2>);
+                                            } else if (line.startsWith('### ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h3 key={i}>{parseBoldText(line.replace('### ', ''), `h3-${i}`)}</h3>);
+                                            } else if (line.startsWith('![')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                // Parse markdown image syntax ![alt](src)
+                                                const imgMatch = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+                                                if (imgMatch) {
+                                                    elements.push(
+                                                        <img 
+                                                            key={i} 
+                                                            src={imgMatch[2]} 
+                                                            alt={imgMatch[1]} 
+                                                            className="w-full max-w-2xl mx-auto my-6 rounded-lg shadow-md"
+                                                        />
+                                                    );
+                                                }
+                                            } else if (line.startsWith('* ')) {
+                                                inList = true;
+                                                const text = line.replace('* ', '');
+                                                listItems.push(<li key={i}>{parseBoldText(text, `li-${i}`)}</li>);
+                                            } else if (line.startsWith('> ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                const text = line.replace('> ', '');
+                                                elements.push(<blockquote key={i}>{parseBoldText(text, `blockquote-${i}`)}</blockquote>);
+                                            } else if (line.startsWith('---')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<hr key={i} />);
+                                            } else if (line.trim() === '') {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<br key={i} />);
+                                            } else if (line.trim() !== '') {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<p key={i}>{parseBoldText(line, `p-${i}`)}</p>);
+                                            }
+                                        }
+
+                                        // Handle any remaining list items
+                                        if (inList && listItems.length > 0) {
+                                            elements.push(<ul key="final-list">{listItems}</ul>);
+                                        }
+
+                                        return elements;
+                                    })()}
+                                </article>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-slate-900 text-white py-12">
+                        <div className="container mx-auto px-6">
+                            <div className="text-center">
+                                <h3 className="text-xl font-bold mb-4">MDX Class 1</h3>
+                                <p className="text-slate-400 mb-6">หลักสูตรผู้บริหารดิจิทัลทางการแพทย์ รุ่นที่ 1</p>
+                                
+                                <button 
+                                    onClick={goBack}
+                                    className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-full font-medium transition-colors"
+                                >
+                                    <ArrowLeft size={18} />
+                                    กลับไปหน้าบทความทั้งหมด
+                                </button>
+                                
+                                <div className="mt-8 pt-8 border-t border-slate-800">
+                                    <p className="text-slate-500 text-sm">
+                                        © 2025 MDX Class 1. All Rights Reserved.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<ArticlePage />, document.getElementById('root'));
+    </script>
+</body>
+</html>

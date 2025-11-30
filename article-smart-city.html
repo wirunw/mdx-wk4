@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โรงพยาบาลสู่ Smart Hospital - MDX Class 1</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for article reading */
+        .article-content {
+            line-height: 1.8;
+            font-size: 18px;
+        }
+        
+        .article-content h1 {
+            @apply text-3xl font-bold text-slate-900 mb-6 mt-8 pb-4 border-b-2 border-slate-200;
+        }
+        
+        .article-content h2 {
+            @apply text-2xl font-bold text-slate-800 mb-4 mt-6 pb-2 border-b border-slate-100;
+        }
+        
+        .article-content h3 {
+            @apply text-xl font-semibold text-slate-700 mb-3 mt-5;
+        }
+        
+        .article-content p {
+            @apply mb-4 text-slate-700 leading-relaxed;
+        }
+        
+        .article-content ul {
+            @apply mb-4 ml-6 list-disc list-outside;
+        }
+        
+        .article-content li {
+            @apply mb-2 text-slate-700;
+        }
+        
+        .article-content strong {
+            @apply font-semibold text-slate-900;
+        }
+        
+        .article-content blockquote {
+            @apply border-l-4 border-cyan-500 pl-6 py-2 my-6 bg-cyan-50 rounded-r-lg;
+        }
+        
+        .article-content hr {
+            @apply my-8 border-t-2 border-slate-200;
+        }
+        
+        /* Reading progress bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #06b6d4, #14b8a6);
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const IconBase = ({ size = 24, strokeWidth = 2, color = 'currentColor', className = '', children, ...props }) => (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={size}
+                height={size}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={color}
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={className}
+                {...props}
+            >
+                {children}
+            </svg>
+        );
+
+        const ArrowLeft = (props) => (
+            <IconBase {...props}>
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+            </IconBase>
+        );
+
+        const Clock = (props) => (
+            <IconBase {...props}>
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </IconBase>
+        );
+
+        const Users = (props) => (
+            <IconBase {...props}>
+                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </IconBase>
+        );
+
+        const Calendar = (props) => (
+            <IconBase {...props}>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+            </IconBase>
+        );
+
+        const Award = (props) => (
+            <IconBase {...props}>
+                <circle cx="12" cy="8" r="5" />
+                <path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.11" />
+            </IconBase>
+        );
+
+        const ArticlePage = () => {
+            const [readingProgress, setReadingProgress] = useState(0);
+            const [readingTime, setReadingTime] = useState(20);
+
+            // Calculate reading progress
+            useEffect(() => {
+                const handleScroll = () => {
+                    const windowHeight = window.innerHeight;
+                    const documentHeight = document.documentElement.scrollHeight - windowHeight;
+                    const scrolled = window.scrollY;
+                    const progress = (scrolled / documentHeight) * 100;
+                    setReadingProgress(Math.min(progress, 100));
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const goBack = () => {
+                window.location.href = 'index.html#articles';
+            };
+
+            const articleContent = `
+# โรงพยาบาลสู่ Smart Hospital: มุมมองเชิงกลยุทธ์สำหรับผู้บริหารยุค AI และโครงสร้างพื้นฐานดิจิทัล
+
+![Smart Hospital Concept](https://i.postimg.cc/pTYQYRL6/smart_city.png)
+
+## 1. บทนำ: การเปลี่ยนแปลงครั้งใหญ่ของระบบสุขภาพในยุคดิจิทัล
+
+ในโลกที่เทคโนโลยีกำลังเปลี่ยนแปลงทุกอุตสาหกรรม การแพทย์และสาธารณสุขก็ไม่ใช่ข้อยกเว้น การเปลี่ยนแปลงจากโรงพยาบาลแบบดั้งเดิมสู่ **"Smart Hospital"** ไม่ใช่แค่การอัปเกรดเทคโนโลยี แต่เป็นการปฏิวัติระบบการทำงานทั้งหมด
+
+> "**Smart Hospital** ไม่ใช่แค่โรงพยาบาลที่มีเทคโนโลยีล้ำสมัย แต่เป็นระบบที่สามารถเรียนรู้ ปรับตัว และตอบสนองความต้องการของผู้ป่วยได้อย่างทันท่วงที"
+
+สำหรับผู้บริหารในภาคสุขภาพ การทำความเข้าใจแนวโน้มและกลยุทธ์ในการพัฒนา **Smart Hospital** จึงเป็นสิ่งสำคัญอย่างยิ่งเพื่อให้สามารถวางแผนและนำองค์กรของตนเองก้าวสู่ยุคดิจิทัลได้อย่างมีประสิทธิภาพ
+
+## 2. สถานการณ์ปัจจุบัน: ความท้าทายที่โรงพยาบาลไทยต้องเผชิญ
+
+ระบบสุขภาพไทยกำลังเผชิญกับความท้าทายหลายด้านที่บีบให้ต้องปรับเปลี่ยน:
+
+### 2.1 ปัญหาการขาดแพทย์พยาบาล
+
+ประเทศไทยกำลังเผชิญกับปัญหาการขาดแคลนของบุคลากรทางการแพทย์อย่างรุนแรง โดยเฉพาะในพื้นที่ห่างไกล อัตราแพทย์ต่อประชากรน้อยกว่ามาตรฐานสากล ส่งผลให้การเข้าถึงบริการทางการแพทย์ไม่เท่าเทียมกัน
+
+### 2.2 ค่าใช้จ่ายทางการแพทย์ที่เพิ่มสูงขึ้น
+
+ค่ารักษาพยาบาลเพิ่มสูงขึ้นอย่างต่อเนื่อง ทั้งจากการเปลี่ยนแปลงโครงสร้างประชากรสู่สังคมผู้สูงอายุ และการพัฒนาเทคโนโลยีทางการแพทย์ที่มีราคาสูง
+
+### 2.3 ความคาดหวังของผู้ป่วยที่เพิ่มสูงขึ้น
+
+ผู้ป่วยในยุคดิจิทัลมีความคาดหวังที่สูงขึ้นต่อการบริการทางการแพทย์ ต้องการความสะดวกสบาย ความรวดเร็ว และการบริการที่เป็นส่วนตัว
+
+## 3. Smart Hospital: แนวคิดและส่วนประกอบหลัก
+
+Smart Hospital คือโรงพยาบาลที่ใช้เทคโนโลยีดิจิทัลและ AI เพื่อปรับปรุงประสิทธิภาพการทำงาน คุณภาพการรักษา และประสบการณ์ของผู้ป่วย
+
+### 3.1 ส่วนประกอบหลักของ Smart Hospital
+
+#### 3.1.1 โครงสร้างพื้นฐานดิจิทัล (Digital Infrastructure)
+
+* **ระบบเครือข่ายความเร็วสูง (High-Speed Network)**: การเชื่อมต่ออินเทอร์เน็ตความเร็วสูงทั่วทั้งโรงพยาบาล
+* **ระบบ Cloud Computing**: การจัดเก็บและประมวลผลข้อมูลบนคลาวด์เพื่อความยืดหยุ่นและความยืดหยุ่น
+* **ระบบ Internet of Things (IoT)**: การเชื่อมต่ออุปกรณ์ทางการแพทย์ต่างๆ เข้ากับระบบเครือข่าย
+
+#### 3.1.2 ระบบสนับสนุนการตัดสินใจด้วย AI (AI-Powered Decision Support)
+
+* **ระบบวินิจฉัยโรคด้วย AI**: การใช้ AI ช่วยในการวินิจฉัยโรคจากภาพทางการแพทย์
+* **ระบบวางแผนการรักษาแบบส่วนบุคคล**: การใช้ AI วิเคราะห์ข้อมูลผู้ป่วยเพื่อสร้างแผนการรักษาที่เหมาะสมที่สุด
+* **ระบบทำนายความเสี่ยง**: การใช้ AI ทำนายความเสี่ยงในการเกิดโรคซับซ้อน
+
+#### 3.1.3 ระบบบริหารจัดการอัจฉริยะ (Intelligent Management)
+
+* **ระบบจัดการทรัพยากรโรงพยาบาล**: การจัดการห้องผ่าตัด เตียงผู้ป่วย และอุปกรณ์ทางการแพทย์
+* **ระบบจัดการสินค้าคงคลัง**: การจัดการยาและเวชภัณฑ์อัตโนมัติ
+* **ระบบจัดการพลังงาน**: การเฝ้าระวังและจัดการการใช้พลังงานอย่างมีประสิทธิภาพ
+
+### 3.2 ประโยชน์ของ Smart Hospital
+
+#### 3.2.1 สำหรับผู้ป่วย
+
+* **การเข้าถึงบริการที่ง่ายขึ้น**: การนัดหมายและจัดการข้อมูลผ่านแอปพลิเคชัน
+* **การรักษาที่แม่นยำขึ้น**: การวินิจฉัยโรคที่รวดเร็วและแม่นยำยิ่งขึ้น
+* **ประสบการณ์ที่ดีขึ้น**: การลดเวลารอคอยและการเพิ่มความสะดวกสบาย
+
+#### 3.2.2 สำหรับบุคลากรทางการแพทย์
+
+* **การลดภาระงานซ้ำซ้อน**: การทำงานที่ซับซ้อนอัตโนมัติ
+* **การเพิ่มประสิทธิภาพ**: การเข้าถึงข้อมูลและเครื่องมือที่จำเป็นได้ทันท่วงที
+* **การลดความเครียด**: การลดภาระงานที่ไม่จำเป็น
+
+#### 3.2.3 สำหรับผู้บริหาร
+
+* **การตัดสินใจที่ดีขึ้น**: การเข้าถึงข้อมูลเชิงลึกเพื่อการวางแผน
+* **การลดต้นทุน**: การเพิ่มประสิทธิภาพการทำงานและลดของเสีย
+* **การจัดการความเสี่ยง**: การระบุและจัดการความเสี่ยงได้ดีขึ้น
+
+## 4. กลยุทธ์การพัฒนา Smart Hospital สำหรับโรงพยาบาลไทย
+
+### 4.1 การประเมินความพร้อม (Readiness Assessment)
+
+ก่อนที่จะเริ่มพัฒนา Smart Hospital จำเป็นต้องประเมินความพร้อมในด้านต่างๆ:
+
+* **ความพร้อมด้านเทคโนโลยี**: โครงสร้างพื้นฐานดิจิทัลปัจจุบัน
+* **ความพร้อมด้านบุคลากร**: ทักษะและความพร้อมของบุคลากร
+* **ความพร้อมด้านงบประมาณ**: งบประมาณและการลงทุนที่จำเป็น
+* **ความพร้อมด้านกฎระเบียบ**: กฎระเบียบและข้อบังคับที่เกี่ยวข้อง
+
+### 4.2 การวางแผนเชิงกลยุทธ์ (Strategic Planning)
+
+การวางแผนต้องคำนึงถึง:
+
+* **การกำหนดวิสัยทัศน์**: การกำหนดภาพอนาคตของ Smart Hospital
+* **การจัดลำดับความสำคัญ**: การกำหนดโครงการที่จะดำเนินการก่อน-หลัง
+* **การจัดสรรทรัพยากร**: การจัดสรรงบประมาณและบุคลากร
+* **การวัดผล**: การกำหนดตัวชี้วัดความสำเร็จ (KPIs)
+
+### 4.3 การดำเนินการแบบเป็นขั้นตอน (Phased Implementation)
+
+การพัฒนา Smart Hospital ควรดำเนินการเป็นขั้นตอน:
+
+#### ระยะที่ 1: การสร้างรากฐาน (Foundation Building)
+
+* การพัฒนาโครงสร้างพื้นฐานดิจิทัลพื้นฐาน
+* การจัดตั้งทีมงานดิจิทัล
+* การฝึกอบรมบุคลากร
+
+#### ระยะที่ 2: การทดลองและปรับปรุง (Pilot and Refinement)
+
+* การทดลองโครงการในพื้นที่จำกัด
+* การเก็บข้อมูลและปรับปรุงระบบ
+* การขยายผลสำเร็จ
+
+#### ระยะที่ 3: การขยายผล (Scaling Up)
+
+* การขยายโครงการไปทั่วทั้งโรงพยาบาล
+* การเชื่อมต่อกับระบบภายนอก
+* การปรับปรุงอย่างต่อเนื่อง
+
+## 5. กรณีศึกษา: โรงพยาบาลชั้นนำที่ประสบความสำเร็จ
+
+### 5.1 กรณีศึกษา: โรงพยาบาลศิริราช
+
+โรงพยาบาลศิริราชเป็นหนึ่งในโรงพยาบาลชั้นนำของประเทศไทยที่ได้นำเทคโนโลยีมาปรับใช้อย่างกว้างขวาง:
+
+* **ระบบ HIS ที่ทันสมัย**: การพัฒนาระบบข้อมูลผู้ป่วยแบบบูรณาการ
+* **ระบบ Telemedicine**: การให้บริการการแพทย์ทางไกล
+* **ระบบ AI ช่วยวินิจฉัย**: การใช้ AI ช่วยในการวินิจฉัยโรคมะเร็ง
+
+### 5.2 กรณีศึกษา: โรงพยาบาลจุฬาลงคณ์
+
+โรงพยาบาลจุฬาลงคณ์มีนวัตกรรมด้านดิจิทัลที่น่าสนใจ:
+
+* **ระบบ Smart Queue**: การจัดการคิวผู้ป่วยอย่างมีประสิทธิภาพ
+* **ระบบ Medication Management**: การจัดการการจ่ายยาอัตโนมัติ
+* **ระบบ Asset Tracking**: การติดตามอุปกรณ์ทางการแพทย์
+
+## 6. ความท้าทายและแนวทางการแก้ไข
+
+### 6.1 ความท้าทายด้านเทคโนโลยี
+
+* **การเชื่อมต่อระบบเดิม**: การเชื่อมต่อระบบเดิมที่หลากหลาย
+* **ความปลอดภัยของข้อมูล**: การปกป้องข้อมูลผู้ป่วย
+* **ต้นทุนการลงทุนสูง**: การลงทุนในเทคโนโลยีที่มีราคาสูง
+
+### 6.2 ความท้าทายด้านบุคลากร
+
+* **การขาดแคลนทักษะดิจิทัล**: การขาดแคลนบุคลากรที่มีทักษะดิจิทัล
+* **การต้านการเปลี่ยนแปลง**: การต้านการเปลี่ยนแปลงจากบุคลากร
+* **ความต้องการการฝึกอบรม**: ความต้องการการฝึกอบรมอย่างต่อเนื่อง
+
+### 6.3 ความท้าทายด้านกฎระเบียบ
+
+* **กฎระเบียบที่ไม่ชัดเจน**: กฎระเบียบที่ไม่รองรับเทคโนโลยีใหม่
+* **ความกังวลด้านความเป็นส่วนตัว**: ความกังวลเกี่ยวกับความเป็นส่วนตัวของข้อมูล
+* **การขาดมาตรฐาน**: การขาดมาตรฐานด้านเทคโนโลยีทางการแพทย์
+
+## 7. แนวทางการพัฒนาในอนาคต
+
+### 7.1 เทคโนโลยีที่จะเปลี่ยนแปลงโรงพยาบาล
+
+* **5G และ Edge Computing**: การเชื่อมต่อความเร็วสูงและการประมวลผลขอบข่าย
+* **Digital Twin**: การสร้างโมเดลดิจิทัลของโรงพยาบาล
+* **Blockchain**: การจัดการข้อมูลผู้ป่วยอย่างปลอดภัย
+* **Quantum Computing**: การประมวลผลที่ซับซ้อนมหาศาล
+
+### 7.2 แนวโน้มการบริการ
+
+* **การแพทย์แบบส่วนบุคคล**: การรักษาที่ปรับให้เข้ากับแต่ละบุคคล
+* **การแพทย์ทางไกลแบบบูรณาการ**: การให้บริการทางการแพทย์ทางไกลอย่างครบวง
+* **การดูแลสุขภาพแบบต่อเนื่อง**: การดูแลสุขภาพตลอดเวลา
+* **การแพทย์แบบป้องกัน**: การป้องกันโรคมากกว่าการรักษา
+
+## 8. บทสรุป: การเดินทางสู่ Smart Hospital
+
+การพัฒนา Smart Hospital เป็นการเดินทางที่ยาวนานและต้องการความมุ่งมั่น แต่เป็นการลงทุนที่คุ้มค่าอย่างยิ่งสำหรับอนาคตของระบบสุขภาพไทย
+
+> "ความสำเร็จในการพัฒนา Smart Hospital ไม่ได้อยู่ที่เทคโนโลยีที่ล้ำสมัยที่สุด แต่อยู่ที่การสร้างระบบที่ตอบสนองความต้องการของผู้ป่วยอย่างแท้จริง"
+
+สำหรับผู้บริหาร การเริ่มต้นสร้าง Smart Hospital ต้องเริ่มจาก:
+
+1. **การทำความเข้าใจความต้องการของผู้ป่วย**
+2. **การประเมินความพร้อมขององค์กร**
+3. **การวางแผนเชิงกลยุทธ์ที่ชัดเจน**
+4. **การดำเนินการแบบเป็นขั้นตอน**
+5. **การวัดผลและปรับปรุงอย่างต่อเนื่อง**
+
+ด้วยการวางแผนและดำเนินการอย่างมีระบบ โรงพยาบาลไทยสามารถก้าวสู่การเป็น Smart Hospital และสร้างการเปลี่ยนแปลงที่ยั่งยืนให้กับระบบสุขภาพไทยได้อย่างแน่นอน
+
+---
+
+*บทความนี้เป็นส่วนหนึ่งของหลักสูตรผู้บริหารดิจิทัลทางการแพทย์ รุ่นที่ 1 โดย ดร.ชวพล จริยาวิโรจน์*
+
+*เรียบเรียงโดย เภสัชกรวิรุณ เวชศิริ*
+            `;
+
+            return (
+                <div className="min-h-screen bg-slate-50">
+                    {/* Reading Progress Bar */}
+                    <div 
+                        className="reading-progress"
+                        style={{ width: `${readingProgress}%` }}
+                    ></div>
+
+                    {/* Navigation */}
+                    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-slate-200">
+                        <div className="container mx-auto px-6 py-4">
+                            <div className="flex items-center justify-between">
+                                <button 
+                                    onClick={goBack}
+                                    className="flex items-center gap-2 text-slate-600 hover:text-cyan-600 transition-colors"
+                                >
+                                    <ArrowLeft size={20} />
+                                    <span className="font-medium">กลับไปหน้าบทความ</span>
+                                </button>
+                                
+                                <div className="flex items-center gap-6 text-sm text-slate-500">
+                                    <div className="flex items-center gap-2">
+                                        <Clock size={16} />
+                                        <span>อ่าน {readingTime} นาที</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Users size={16} />
+                                        <span>ดร.ชวพล จริยาวิโรจน์</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Calendar size={16} />
+                                        <span>29 พฤศจิกายน 2568</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Article Header */}
+                    <header className="bg-gradient-to-br from-cyan-600 to-teal-700 text-white py-16">
+                        <div className="container mx-auto px-6">
+                            <div className="max-w-4xl mx-auto text-center">
+                                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+                                    <Award className="text-yellow-300" size={20} />
+                                    <span className="text-sm font-semibold">Smart Hospital</span>
+                                </div>
+                                
+                                <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                                    โรงพยาบาลสู่ Smart Hospital
+                                </h1>
+                                
+                                <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                                    มุมมองเชิงกลยุทธ์สำหรับผู้บริหารยุค AI และโครงสร้างพื้นฐานดิจิทัล
+                                </p>
+                                
+                                <div className="flex items-center justify-center gap-8 text-white/80 mb-8">
+                                    <div className="flex items-center gap-2">
+                                        <Users size={18} />
+                                        <span>ดร.ภาณุพงศ์ สุขสถิตย์</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Clock size={18} />
+                                        <span>{readingTime} นาที</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex justify-center mb-8">
+                                    <div className="relative">
+                                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white text-4xl font-bold shadow-xl">
+                                            ภพ
+                                        </div>
+                                        <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
+                                            <Award className="text-green-600" size={20} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Article Content */}
+                    <main className="py-12">
+                        <div className="container mx-auto px-6">
+                            <div className="max-w-4xl mx-auto">
+                                <article className="article-content bg-white rounded-2xl shadow-lg p-8 md:p-12">
+                                    {(() => {
+                                        const lines = articleContent.split('\n');
+                                        const elements = [];
+                                        let inList = false;
+                                        let listItems = [];
+
+                                        const parseBoldText = (text, keyPrefix) => {
+                                            const parts = [];
+                                            let lastIndex = 0;
+                                            const regex = /\*\*(.*?)\*\*/g;
+                                            let match;
+                                            
+                                            while ((match = regex.exec(text)) !== null) {
+                                                if (match.index > lastIndex) {
+                                                    parts.push(text.substring(lastIndex, match.index));
+                                                }
+                                                parts.push(<strong key={`${keyPrefix}-${match.index}`}>{match[1]}</strong>);
+                                                lastIndex = regex.lastIndex;
+                                            }
+                                            
+                                            if (lastIndex < text.length) {
+                                                parts.push(text.substring(lastIndex));
+                                            }
+                                            
+                                            return parts.length > 0 ? parts : text;
+                                        };
+
+                                        for (let i = 0; i < lines.length; i++) {
+                                            const line = lines[i];
+                                            
+                                            if (line.startsWith('# ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h1 key={i}>{parseBoldText(line.replace('# ', ''), `h1-${i}`)}</h1>);
+                                            } else if (line.startsWith('## ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h2 key={i}>{parseBoldText(line.replace('## ', ''), `h2-${i}`)}</h2>);
+                                            } else if (line.startsWith('### ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h3 key={i}>{parseBoldText(line.replace('### ', ''), `h3-${i}`)}</h3>);
+                                            } else if (line.startsWith('![')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                // Parse markdown image syntax ![alt](src)
+                                                const imgMatch = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+                                                if (imgMatch) {
+                                                    elements.push(
+                                                        <img 
+                                                            key={i} 
+                                                            src={imgMatch[2]} 
+                                                            alt={imgMatch[1]} 
+                                                            className="w-full max-w-2xl mx-auto my-6 rounded-lg shadow-md"
+                                                        />
+                                                    );
+                                                }
+                                            } else if (line.startsWith('* ')) {
+                                                inList = true;
+                                                const text = line.replace('* ', '');
+                                                listItems.push(<li key={i}>{parseBoldText(text, `li-${i}`)}</li>);
+                                            } else if (line.match(/^\d+\. /)) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                const match = line.match(/^(\d+)\. (.*)$/);
+                                                if (match) {
+                                                    const number = match[1];
+                                                    const text = match[2];
+                                                    elements.push(<p key={i} className="ml-6 mb-2 font-semibold text-slate-800">{number}. {parseBoldText(text, `p-${i}`)}</p>);
+                                                }
+                                            } else if (line.startsWith('> ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                const text = line.replace('> ', '');
+                                                elements.push(<blockquote key={i}>{parseBoldText(text, `blockquote-${i}`)}</blockquote>);
+                                            } else if (line.startsWith('---')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<hr key={i} />);
+                                            } else if (line.trim() === '') {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<br key={i} />);
+                                            } else if (line.trim() !== '') {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<p key={i}>{parseBoldText(line, `p-${i}`)}</p>);
+                                            }
+                                        }
+
+                                        // Handle any remaining list items
+                                        if (inList && listItems.length > 0) {
+                                            elements.push(<ul key="final-list">{listItems}</ul>);
+                                        }
+
+                                        return elements;
+                                    })()}
+                                </article>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-slate-900 text-white py-12">
+                        <div className="container mx-auto px-6">
+                            <div className="text-center">
+                                <h3 className="text-xl font-bold mb-4">MDX Class 1</h3>
+                                <p className="text-slate-400 mb-6">หลักสูตรผู้บริหารดิจิทัลทางการแพทย์ รุ่นที่ 1</p>
+                                
+                                <button 
+                                    onClick={goBack}
+                                    className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 px-6 py-3 rounded-full font-medium transition-colors"
+                                >
+                                    <ArrowLeft size={18} />
+                                    กลับไปหน้าบทความทั้งหมด
+                                </button>
+                                
+                                <div className="mt-8 pt-8 border-t border-slate-800">
+                                    <p className="text-slate-500 text-sm">
+                                        เภสัชกรวิรุณ เวชศิริ
+                                    </p>
+                                    <p className="text-slate-400 text-xs mt-1">
+                                        © 2025 MDX Class 1. All Rights Reserved.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<ArticlePage />, document.getElementById('root'));
+    </script>
+</body>
+</html>

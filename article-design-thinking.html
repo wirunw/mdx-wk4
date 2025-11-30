@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ถอดรหัส Design Thinking - MDX Class 1</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for article reading */
+        .article-content {
+            line-height: 1.8;
+            font-size: 18px;
+        }
+        
+        .article-content h1 {
+            @apply text-3xl font-bold text-slate-900 mb-6 mt-8 pb-4 border-b-2 border-slate-200;
+        }
+        
+        .article-content h2 {
+            @apply text-2xl font-bold text-slate-800 mb-4 mt-6 pb-2 border-b border-slate-100;
+        }
+        
+        .article-content h3 {
+            @apply text-xl font-semibold text-slate-700 mb-3 mt-5;
+        }
+        
+        .article-content p {
+            @apply mb-4 text-slate-700 leading-relaxed;
+        }
+        
+        .article-content ul {
+            @apply mb-4 ml-6 list-disc list-outside;
+        }
+        
+        .article-content li {
+            @apply mb-2 text-slate-700;
+        }
+        
+        .article-content strong {
+            @apply font-semibold text-slate-900;
+        }
+        
+        .article-content blockquote {
+            @apply border-l-4 border-blue-500 pl-6 py-2 my-6 bg-blue-50 rounded-r-lg;
+        }
+        
+        .article-content hr {
+            @apply my-8 border-t-2 border-slate-200;
+        }
+        
+        /* Reading progress bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #3b82f6, #06b6d4);
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const IconBase = ({ size = 24, strokeWidth = 2, color = 'currentColor', className = '', children, ...props }) => (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={size}
+                height={size}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={color}
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={className}
+                {...props}
+            >
+                {children}
+            </svg>
+        );
+
+        const ArrowLeft = (props) => (
+            <IconBase {...props}>
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+            </IconBase>
+        );
+
+        const Clock = (props) => (
+            <IconBase {...props}>
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </IconBase>
+        );
+
+        const Users = (props) => (
+            <IconBase {...props}>
+                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </IconBase>
+        );
+
+        const Calendar = (props) => (
+            <IconBase {...props}>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+            </IconBase>
+        );
+
+        const Award = (props) => (
+            <IconBase {...props}>
+                <circle cx="12" cy="8" r="5" />
+                <path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.11" />
+            </IconBase>
+        );
+
+        const ArticlePage = () => {
+            const [readingProgress, setReadingProgress] = useState(0);
+            const [readingTime, setReadingTime] = useState(12);
+
+            // Calculate reading progress
+            useEffect(() => {
+                const handleScroll = () => {
+                    const windowHeight = window.innerHeight;
+                    const documentHeight = document.documentElement.scrollHeight - windowHeight;
+                    const scrolled = window.scrollY;
+                    const progress = (scrolled / documentHeight) * 100;
+                    setReadingProgress(Math.min(progress, 100));
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const goBack = () => {
+                window.location.href = 'index.html#articles';
+            };
+
+            const articleContent = `
+# ถอดรหัส Design Thinking: กระบวนการคิดเชิงออกแบบที่เปลี่ยน 'ปัญหา' ให้เป็น 'นวัตกรรม' ที่คนรัก
+
+![Design Thinking Process](https://i.postimg.cc/3J3J3J3J/design-thinking.png)
+
+## 1.0 บทนำ: ทำไมผลิตภัณฑ์ที่ดีที่สุด... ถึงไม่มีคนใช้?
+
+เคยสงสัยไหมครับว่า ทำไมหลายองค์กรถึงทุ่มเททรัพยากรมหาศาลเพื่อสร้างผลิตภัณฑ์หรือบริการที่ยอดเยี่ยม ทั้งในแง่เทคโนโลยีและฟังก์ชันการใช้งาน แต่สุดท้ายกลับล้มเหลวไม่เป็นท่า ไม่มีใครอยากใช้ หรือไม่สามารถตอบโจทย์ตลาดได้?
+
+ปัญหาคลาสสิกนี้มักเกิดขึ้นจากจุดบอดเดียวกัน นั่นคือการละเลยความเข้าใจในตัว "ผู้ใช้งาน" อย่างแท้จริง เรามักเริ่มต้นจาก "สิ่งที่เราทำได้" แทนที่จะเริ่มต้นจาก "สิ่งที่ผู้คนต้องการ"
+
+> "**Design Thinking** ไม่ใช่แค่เรื่องของการออกแบบให้สวยงาม แต่มันคือกระบวนการที่เป็นระบบในการแก้ปัญหาที่ซับซ้อน"
+
+นี่คือจุดที่ "**Design Thinking**" หรือ "กระบวนการคิดเชิงออกแบบ" เข้ามามีบทบาทสำคัญในฐานะเครื่องมือแก้ปัญหาที่ทรงพลัง แนวคิดนี้คือกระบวนการที่เน้นมนุษย์เป็นศูนย์กลาง (**Human-Centered**) เพื่อเปลี่ยนมุมมองการสร้างสรรค์สิ่งใหม่จากการยึดติดกับเทคโนโลยีหรือโมเดลธุรกิจ มาเป็นการเริ่มต้นที่ความต้องการอันลึกซึ้งของผู้คน
+
+## 2.0 บริบทโลกธุรกิจ: ทำไมวันนี้เราต้อง "Innovate or Die"
+
+ในโลกธุรกิจที่เปลี่ยนแปลงอย่างรวดเร็ว มีคำคมหนึ่งที่สะท้อนความเป็นจริงได้อย่างเฉียบคมว่า "Innovation distinguishes between a Leader and a Follower" หรือ "นวัตกรรมคือสิ่งที่แบ่งแยก 'ผู้นำ' ออกจาก 'ผู้ตาม'"
+
+ประวัติศาสตร์ได้จารึกเรื่องราวของยักษ์ใหญ่ที่ล้มลงเพราะความประมาทนี้ไว้มากมาย
+
+### กรณีศึกษา: Kodak และการพลาดโอกาสของกล้องดิจิทัล
+
+วิศวกรของ Kodak ที่ชื่อ Steve Sasson เป็นผู้คิดค้นกล้องดิจิทัลได้เป็นคนแรกของโลกในปี 1975 แต่แทนที่ผู้บริหารจะมองเห็นอนาคต พวกเขากลับสั่งให้เก็บเรื่องนี้เงียบ โดยกล่าวว่า "That's cute but don't tell anyone about it" (มันดูดีนะ แต่เก็บไว้เถอะ อย่าบอกใคร)
+
+นี่คือกรณีศึกษาคลาสสิกขององค์กรที่ถูกโมเดลรายได้เดิมของตนเองจับเป็นตัวประกัน เป็นความล้มเหลวของวิสัยทัศน์ ไม่ใช่ความล้มเหลวของเทคโนโลยี
+
+### บทเรียนจาก Nokia และ Blackberry
+
+เช่นเดียวกับ Nokia และ Blackberry ที่เคยเป็นเจ้าตลาดโทรศัพท์มือถือ แต่กลับยึดติดกับความสำเร็จเดิมๆ อย่างปุ่มกดและคีย์บอร์ด จนกระทั่งถูก iPhone ที่เน้นประสบการณ์ผู้ใช้ (User Experience) เป็นหัวใจสำคัญของการออกแบบเข้ามาปฏิวัติวงการและทิ้งให้พวกเขากลายเป็นเพียงตำนาน
+
+ในทางกลับกัน องค์กรที่ปรับตัวได้ทันก็สามารถสร้างการเติบโตใหม่ๆ ได้เสมอ แม้แต่ในประเทศไทย เราก็ได้เห็นตัวอย่างที่น่าสนใจมากมาย
+
+## 3.0 แก่นแท้ของ Design Thinking: ไม่ใช่แค่ "กระบวนการ" แต่คือ "วิธีคิด"
+
+หลายคนมักเข้าใจว่า Design Thinking เป็นเพียงชุดเครื่องมือหรือขั้นตอน 5 ข้อ แต่ในความเป็นจริงแล้ว แก่นแท้ของมันประกอบด้วยสองส่วนที่ต้องทำงานควบคู่กันเสมอ นั่นคือ "วิธีคิด (Mindset)" และ "กระบวนการ (Process)"
+
+### วิธีคิด (Mindset): กล้าลงมือทำ กล้าเรียนรู้
+
+หัวใจสำคัญของวิธีคิดแบบ Design Thinking ถูกสรุปไว้อย่างทรงพลังผ่านคำคมที่ปรากฏในสถาบัน d.school ของมหาวิทยาลัย Stanford:
+
+> "Nothing is a mistake. There's no win and no fail. There's only MAKE."
+
+ประโยคนี้สะท้อนทัศนคติที่ว่า ไม่มีคำว่าผิดพลาด ไม่มีคำว่าแพ้หรือชนะ มีเพียงการ "ลงมือทำ" เท่านั้น มันคือการเปิดใจยอมรับการทดลอง การเรียนรู้จากความล้มเหลว และมองว่าทุกความผิดพลาดคือข้อมูลอันล้ำค่าที่จะนำไปสู่โซลูชันที่ดีขึ้น
+
+### จุดสมดุลของนวัตกรรม (Sweet Spot)
+
+นอกจากวิธีคิดแล้ว Design Thinking ยังมีกรอบการทำงานที่ช่วยให้มั่นใจว่านวัตกรรมที่ยอดเยี่ยมจะเกิดขึ้น ณ "จุดสมดุล (Sweet Spot)" ที่วงกลมสามวงนี้ทับซ้อนกันพอดี:
+
+1. **Human Value (Desirability)**: ผู้ใช้งานต้องการและอยากใช้มันจริง ๆ หรือไม่?
+2. **Technology (Feasibility)**: เทคโนโลยีที่มีอยู่สามารถทำให้ไอเดียนี้เกิดขึ้นจริงได้หรือไม่?
+3. **Business (Viability)**: โมเดลธุรกิจมีความคุ้มค่าและยั่งยืนในระยะยาวหรือไม่?
+
+หลายทีมมักตกหลุมรักเทคโนโลยี (Feasibility) หรือโมเดลธุรกิจ (Viability) แต่นักกลยุทธ์รู้ดีว่านวัตกรรมที่ยั่งยืนเริ่มต้นและจบลงที่ Human Desirability เสมอ
+
+## 4.0 เจาะลึกกระบวนการ 5 ขั้นตอน: จาก "ความเข้าใจ" สู่ "ต้นแบบที่จับต้องได้"
+
+กระบวนการ Design Thinking ที่ได้รับการยอมรับอย่างแพร่หลายจาก d.school ของมหาวิทยาลัย Stanford ประกอบด้วย 5 ขั้นตอนหลัก ได้แก่ Empathize, Define, Ideate, Prototype, และ Test
+
+### ขั้นตอนที่ 1: Empathize – การเอาใจเขามาใส่ใจเราอย่างลึกซึ้ง
+
+นี่คือขั้นตอนที่เป็นหัวใจและจุดเริ่มต้นของกระบวนการทั้งหมด ความเข้าอกเข้าใจ (Empathy) ไม่ใช่แค่การ "สงสาร" แต่คือการพยายามทำความเข้าใจโลกผ่านมุมมองของผู้ใช้งานอย่างแท้จริง
+
+#### แนวคิด: โมเดลภูเขาน้ำแข็ง (Iceberg Model)
+
+สิ่งที่เรามองเห็นภายนอก เช่น พฤติกรรมการใช้งาน (สิ่งที่ผู้ใช้ทำ) เป็นเพียงแค่ยอดของภูเขาน้ำแข็ง แต่ความต้องการที่แท้จริง ความเชื่อ หรือความรู้สึกที่ซ่อนอยู่ภายใน มักซ่อนอยู่ลึกลงไปใต้น้ำ
+
+#### วิธีการ: Observe, Immerse, Engage
+
+มี 3 วิธีหลักๆ ที่ใช้ในการเก็บข้อมูล:
+
+1. **Observe (การสังเกต)**: เฝ้าดูพฤติกรรมของผู้ใช้ในสภาพแวดล้อมจริงโดยไม่เข้าไปตัดสินหรือแทรกแซง
+2. **Immerse (การเข้าไปอยู่ในสถานการณ์)**: ลองเอาตัวเองเข้าไปอยู่ในสถานการณ์เดียวกับผู้ใช้
+3. **Engage (การพูดคุยสัมภาษณ์)**: พูดคุยอย่างเป็นกันเองเพื่อล้วงลึกถึงเรื่องราว ประสบการณ์ และความรู้สึกที่เขาอาจไม่เคยพูดออกมาตรงๆ
+
+### ขั้นตอนที่ 2: Define – การระบุปัญหาให้คมชัด
+
+หลังจากที่เราได้ข้อมูลดิบ (Raw Data) มาจากขั้นตอน Empathize แล้ว ขั้นตอนนี้คือการนำข้อมูลเหล่านั้นมาสังเคราะห์ (Synthesize) เพื่อระบุ "ปัญหาที่แท้จริง" หรือ "ความต้องการที่ซ่อนอยู่ (Insight)" ที่ควรค่าแก่การแก้ไข
+
+#### เครื่องมือที่ใช้: Persona Map (หรือ Empathy Map)
+
+เรามักนำข้อมูลที่ได้มาจัดกลุ่มลงในแผนที่ 4 ช่อง:
+
+* **Say (สิ่งที่เขาพูด)**: คำพูดหรือประโยคที่ได้ยินจากการสัมภาษณ์
+* **Do (สิ่งที่เขาทำ)**: พฤติกรรมที่สังเกตเห็น
+* **Think (สิ่งที่เขาคิด)**: สิ่งที่เราตีความจากพฤติกรรมและคำพูดของเขา
+* **Feel (สิ่งที่เขารู้สึก)**: อารมณ์ความรู้สึกที่สัมผัสได้
+
+#### จาก Insight สู่โจทย์ที่ทรงพลัง: Point of View (POV) Statement
+
+เมื่อเราเติมข้อมูลลงใน Persona Map เราจะเริ่มมองเห็นความขัดแย้ง (Contradiction) และความต้องการที่ซ่อนอยู่ ซึ่งจะถูกกลั่นออกมาเป็น Insight จากนั้นเราจะนำ Insight นี้มาสร้างเป็นประโยคโจทย์ที่เรียกว่า Point of View (POV) Statement
+
+โครงสร้างคือ: [ผู้ใช้] + ต้องการ [ความต้องการ] + เพราะ [Insight]
+
+### ขั้นตอนที่ 3-5: Ideate, Prototype, และ Test – เปลี่ยนไอเดียให้เป็นจริง
+
+สามขั้นตอนสุดท้ายคือช่วงของการลงมือสร้างสรรค์และทดสอบโซลูชันอย่างรวดเร็ว
+
+1. **Ideate (สร้างไอเดีย)**: คือขั้นตอนของการระดมสมองเพื่อหาทางแก้ไขปัญหาตามโจทย์ POV ที่ตั้งไว้
+2. **Prototype (สร้างต้นแบบ)**: คือการเปลี่ยนไอเดียที่เป็นนามธรรมให้กลายเป็นต้นแบบที่จับต้องได้อย่างรวดเร็ว
+3. **Test (ทดสอบ)**: คือการนำต้นแบบที่สร้างขึ้นไปให้ผู้ใช้งานจริงได้ทดลองใช้
+
+## 5.0 บทสรุป: เริ่มต้นสร้างนวัตกรรมด้วยตัวคุณเอง
+
+Design Thinking ไม่ใช่ศาสตร์ลึกลับที่จำกัดอยู่แค่ในแวดวงนักออกแบบหรือบริษัทเทคโนโลยี แต่เป็นทั้ง "วิธีคิด" และ "กระบวนการ" ที่ทรงพลังและเป็นระบบ ซึ่งทุกคนสามารถเรียนรู้และนำไปปรับใช้ได้
+
+อุปสรรคที่แท้จริงของนวัตกรรมไม่ใช่การขาดทรัพยากร แต่คือการขาดความเข้าอกเข้าใจ
+
+> ก่อนที่คุณจะสร้างฟีเจอร์ถัดไป ลองถามตัวเองว่า: ใครคือผู้ใช้ที่คุณยังไม่เข้าใจ?
+
+คำตอบของคำถามเหล่านี้คือกุญแจนสู่ความสำเร็จครั้งต่อไปของคุณ
+
+---
+
+*บทความนี้เป็นส่วนหนึ่งของหลักสูตรผู้บริหารดิจิทัลทางการแพทย์ รุ่นที่ 1 โดย ดร.อรชร อิงคานุวัฒน์*
+
+*เรียบเรียงโดย เภสัชกรวิรุณ เวชศิริ*
+            `;
+
+            return (
+                <div className="min-h-screen bg-slate-50">
+                    {/* Reading Progress Bar */}
+                    <div 
+                        className="reading-progress"
+                        style={{ width: `${readingProgress}%` }}
+                    ></div>
+
+                    {/* Navigation */}
+                    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-slate-200">
+                        <div className="container mx-auto px-6 py-4">
+                            <div className="flex items-center justify-between">
+                                <button 
+                                    onClick={goBack}
+                                    className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors"
+                                >
+                                    <ArrowLeft size={20} />
+                                    <span className="font-medium">กลับไปหน้าบทความ</span>
+                                </button>
+                                
+                                <div className="flex items-center gap-6 text-sm text-slate-500">
+                                    <div className="flex items-center gap-2">
+                                        <Clock size={16} />
+                                        <span>อ่าน {readingTime} นาที</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Users size={16} />
+                                        <span>ดร.อรชร อิงคานุวัฒน์</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Calendar size={16} />
+                                        <span>29 พฤศจิกายน 2568</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Article Header */}
+                    <header className="bg-gradient-to-br from-blue-600 to-cyan-700 text-white py-16">
+                        <div className="container mx-auto px-6">
+                            <div className="max-w-4xl mx-auto text-center">
+                                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+                                    <Award className="text-yellow-300" size={20} />
+                                    <span className="text-sm font-semibold">Design Thinking</span>
+                                </div>
+                                
+                                <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                                    ถอดรหัส Design Thinking
+                                </h1>
+                                
+                                <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                                    กระบวนการคิดเชิงออกแบบที่เปลี่ยน 'ปัญหา' ให้เป็น 'นวัตกรรม' ที่คนรัก
+                                </p>
+                                
+                                <div className="flex items-center justify-center gap-8 text-white/80 mb-8">
+                                    <div className="flex items-center gap-2">
+                                        <Users size={18} />
+                                        <span>ดร.อรชร อิงคานุวัฒน์</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Clock size={18} />
+                                        <span>{readingTime} นาที</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex justify-center mb-8">
+                                    <div className="relative">
+                                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-white text-4xl font-bold shadow-xl">
+                                            อร
+                                        </div>
+                                        <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
+                                            <Award className="text-blue-600" size={20} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Article Content */}
+                    <main className="py-12">
+                        <div className="container mx-auto px-6">
+                            <div className="max-w-4xl mx-auto">
+                                <article className="article-content bg-white rounded-2xl shadow-lg p-8 md:p-12">
+                                    {(() => {
+                                        const lines = articleContent.split('\n');
+                                        const elements = [];
+                                        let inList = false;
+                                        let listItems = [];
+
+                                        const parseBoldText = (text, keyPrefix) => {
+                                            const parts = [];
+                                            let lastIndex = 0;
+                                            const regex = /\*\*(.*?)\*\*/g;
+                                            let match;
+                                            
+                                            while ((match = regex.exec(text)) !== null) {
+                                                if (match.index > lastIndex) {
+                                                    parts.push(text.substring(lastIndex, match.index));
+                                                }
+                                                parts.push(<strong key={`${keyPrefix}-${match.index}`}>{match[1]}</strong>);
+                                                lastIndex = regex.lastIndex;
+                                            }
+                                            
+                                            if (lastIndex < text.length) {
+                                                parts.push(text.substring(lastIndex));
+                                            }
+                                            
+                                            return parts.length > 0 ? parts : text;
+                                        };
+
+                                        for (let i = 0; i < lines.length; i++) {
+                                            const line = lines[i];
+                                            
+                                            if (line.startsWith('# ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h1 key={i}>{parseBoldText(line.replace('# ', ''), `h1-${i}`)}</h1>);
+                                            } else if (line.startsWith('## ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h2 key={i}>{parseBoldText(line.replace('## ', ''), `h2-${i}`)}</h2>);
+                                            } else if (line.startsWith('### ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<h3 key={i}>{parseBoldText(line.replace('### ', ''), `h3-${i}`)}</h3>);
+                                            } else if (line.startsWith('![')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                // Parse markdown image syntax ![alt](src)
+                                                const imgMatch = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+                                                if (imgMatch) {
+                                                    elements.push(
+                                                        <img 
+                                                            key={i} 
+                                                            src={imgMatch[2]} 
+                                                            alt={imgMatch[1]} 
+                                                            className="w-full max-w-2xl mx-auto my-6 rounded-lg shadow-md"
+                                                        />
+                                                    );
+                                                }
+                                            } else if (line.startsWith('* ')) {
+                                                inList = true;
+                                                const text = line.replace('* ', '');
+                                                listItems.push(<li key={i}>{parseBoldText(text, `li-${i}`)}</li>);
+                                            } else if (line.startsWith('> ')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                const text = line.replace('> ', '');
+                                                elements.push(<blockquote key={i}>{parseBoldText(text, `blockquote-${i}`)}</blockquote>);
+                                            } else if (line.startsWith('---')) {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<hr key={i} />);
+                                            } else if (line.trim() === '') {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<br key={i} />);
+                                            } else if (line.trim() !== '') {
+                                                if (inList) {
+                                                    elements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+                                                    listItems = [];
+                                                    inList = false;
+                                                }
+                                                elements.push(<p key={i}>{parseBoldText(line, `p-${i}`)}</p>);
+                                            }
+                                        }
+
+                                        // Handle any remaining list items
+                                        if (inList && listItems.length > 0) {
+                                            elements.push(<ul key="final-list">{listItems}</ul>);
+                                        }
+
+                                        return elements;
+                                    })()}
+                                </article>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-slate-900 text-white py-12">
+                        <div className="container mx-auto px-6">
+                            <div className="text-center">
+                                <h3 className="text-xl font-bold mb-4">MDX Class 1</h3>
+                                <p className="text-slate-400 mb-6">หลักสูตรผู้บริหารดิจิทัลทางการแพทย์ รุ่นที่ 1</p>
+                                
+                                <button 
+                                    onClick={goBack}
+                                    className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full font-medium transition-colors"
+                                >
+                                    <ArrowLeft size={18} />
+                                    กลับไปหน้าบทความทั้งหมด
+                                </button>
+                                
+                                <div className="mt-8 pt-8 border-t border-slate-800">
+                                    <p className="text-slate-500 text-sm">
+                                        เภสัชกรวิรุณ เวชศิริ
+                                    </p>
+                                    <p className="text-slate-400 text-xs mt-1">
+                                        © 2025 MDX Class 1. All Rights Reserved.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<ArticlePage />, document.getElementById('root'));
+    </script>
+</body>
+</html>
